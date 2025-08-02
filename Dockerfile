@@ -1,4 +1,3 @@
-# 기존의 Ubuntu 22.04 이미지 사용
 FROM ubuntu:22.04
 
 # 필요한 패키지 설치
@@ -11,10 +10,11 @@ RUN mkdir -p /app
 WORKDIR /app
 RUN echo "Tmate Session is available. Check the logs for connection details." > index.html
 
-# 컨테이너가 노출할 포트 지정
-EXPOSE 6080
+# 위에서 만든 start.sh 파일을 컨테이너에 복사합니다.
+COPY start.sh .
 
-# 웹 서버를 메인 프로세스로 실행하고, 백그라운드에서 Tmate 실행
-CMD python3 -m http.server 6080 & \
-    tmate -F && \
-    wait
+# start.sh 파일에 실행 권한을 부여합니다.
+RUN chmod +x start.sh
+
+# Railway가 컨테이너를 실행할 때 start.sh 스크립트를 실행하도록 설정합니다.
+CMD ["./start.sh"]
